@@ -191,9 +191,9 @@ def create_model(
 
     return UNetModel(
         image_size=image_size,
-        in_channels=3,
+        in_channels=1, # MODIFIED: 3 -> 1        
         model_channels=num_channels,
-        out_channels=(3 if not learn_sigma else 6),
+        out_channels=(1 if not learn_sigma else 2), # MODIFIED 3->1 and 6->2 if learn_sigma is true
         num_res_blocks=num_res_blocks,
         attention_resolutions=tuple(attention_ds),
         dropout=dropout,
@@ -272,9 +272,8 @@ def create_gaussian_diffusion(
     betas = gd.get_named_beta_schedule(noise_schedule, steps, use_scale=True)
 
     if conf.use_value_logger:
-        conf.value_logger.add_value(
-            betas, 'betas create_gaussian_diffusion')
-
+        conf.value_logger.add_value(betas, 'betas create_gaussian_diffusion')
+        
     if use_kl:
         loss_type = gd.LossType.RESCALED_KL
     elif rescale_learned_sigmas:
